@@ -79,11 +79,15 @@ class CSVGrouper
       csv_out << [UNIQ_ID, *@csv_data.headers]
 
       @csv_data.each do |row|
+        # Technically all values should point to the same root,
+        # take the first non-nil value to grab uniq_id
         group_value = target_columns.map { |idx| row[idx] }.compact.first
         uniq_id = uniq_ids[group_value]
+
         if uniq_id
           csv_out << [uniq_id, *row.fields]
         else
+          # Assume those with no values to be a separate individual
           csv_out << [@id, *row.fields]
           @id += 1
         end
